@@ -22,19 +22,27 @@ cache:
     - "11211"
 ```
 
+Test the service using the docker-compose command:
+
 ```
 docker-compose up -d
 ```
+
+Stop the services:
 
 ```
 docker-compose stop
 ```
 
+Remove the services:
+
 ```
 docker-compose rm
 ```
 
-## Convert docker-compose services to Kubernetes pods
+At this point the docker-compose.yml file is ready for conversion.
+
+## docker-compose to Kubernetes
 
 Use the compose2kube command to convert `docker-compose.yml` to native Kubernetes objects.
 
@@ -43,15 +51,9 @@ $ compose2kube -compose-file docker-compose.yml -output-dir output
 ```
 
 ```
-tree output
-```
-```
-output
-├── cache-rc.yaml
-├── database-rc.yaml
-└── web-rc.yaml
-
-0 directories, 3 files
+output/cache-rc.yaml
+output/database-rc.yaml
+output/web-rc.yaml
 ```
 
 ### Launch the Kubernetes replication controllers
