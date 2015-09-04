@@ -32,6 +32,12 @@ Test the service using the docker-compose command:
 docker-compose up -d
 ```
 
+List the running services:
+
+```
+docker-compose ps
+```
+
 Stop the services:
 
 ```
