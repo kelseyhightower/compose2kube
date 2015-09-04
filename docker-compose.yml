@@ -1,0 +1,13 @@
+web:
+  image: nginx
+  ports:
+    - "80"
+    - "443"
+database:
+  image: postgres
+  ports:
+    - "5432"
+cache:
+  image: memcached
+  ports:
+    - "11211"
