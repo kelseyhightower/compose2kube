@@ -45,11 +45,12 @@ func main() {
 		ComposeFile: composeFile,
 	})
 
-	err := p.Parse()
-	if err != nil {
-		log.Fatal(err)
+	if err := p.Parse(); err != nil {
+		log.Fatalf("Failed to parse the compose project from %s: %v", composeFile, err)
 	}
-	os.MkdirAll(outputDir, 0755)
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		log.Fatalf("Failed to create the output directory %s: %v", outputDir, err)
+	}
 
 	for name, service := range p.Configs {
 		rc := &api.ReplicationController{
@@ -81,13 +82,13 @@ func main() {
 		}
 
 		// Configure the container ports.
-		ports := make([]api.ContainerPort, 0)
+		var ports []api.ContainerPort
 		for _, port := range service.Ports {
-			if portNumber, err := strconv.Atoi(port); err == nil {
-				ports = append(ports, api.ContainerPort{ContainerPort: portNumber})
-				continue
+			portNumber, err := strconv.Atoi(port)
+			if err != nil {
+				log.Fatalf("Invalid container port %s for service %s", port, name)
 			}
-			log.Fatal("invalid container port %s for service %s", port, name)
+			ports = append(ports, api.ContainerPort{ContainerPort: portNumber})
 		}
 
 		rc.Spec.Template.Spec.Containers[0].Ports = ports
@@ -101,12 +102,12 @@ func main() {
 		case "on-failure":
 			rc.Spec.Template.Spec.RestartPolicy = api.RestartPolicyOnFailure
 		default:
-			log.Fatalf("unknown restart policy %s for service %s", service.Restart, name)
+			log.Fatalf("Unknown restart policy %s for service %s", service.Restart, name)
 		}
 
 		data, err := json.MarshalIndent(rc, "", "  ")
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("Failed to marshal the replication controller: %v", err)
 		}
 
 		// Save the replication controller for the Docker compose service to the
@@ -114,7 +115,7 @@ func main() {
 		outputFileName := fmt.Sprintf("%s-rc.yaml", name)
 		outputFilePath := filepath.Join(outputDir, outputFileName)
 		if err := ioutil.WriteFile(outputFilePath, data, 0644); err != nil {
-			log.Fatal(err)
+			log.Fatalf("Failed to write replication controller %s: %v", outputFileName, err)
 		}
 		fmt.Println(outputFilePath)
 	}
