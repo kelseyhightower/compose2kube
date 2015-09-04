@@ -6,6 +6,12 @@ Convert docker-compose service files to Kubernetes objects.
 
 compose2kube is in the prototype stage and only supports mapping container images, ports, and restart policies to Kubernetes [replication controllers](https://github.com/kubernetes/kubernetes/blob/release-1.0/docs/user-guide/replication-controller.md). Thanks to the [docker/libcompose](https://github.com/docker/libcompose) library, compose2kube will support the complete docker-compose specification in the near future.
 
+## Build
+
+```
+go build .
+```
+
 ## Usage
 
 Create a docker-compose.yml file
