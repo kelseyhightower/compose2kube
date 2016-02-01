@@ -25,6 +25,7 @@ import (
 
 	"github.com/docker/libcompose/project"
 	"k8s.io/kubernetes/pkg/api"
+	"k8s.io/kubernetes/pkg/api/unversioned"
 )
 
 var (
@@ -54,7 +55,7 @@ func main() {
 
 	for name, service := range p.Configs {
 		rc := &api.ReplicationController{
-			TypeMeta: api.TypeMeta{
+			TypeMeta: unversioned.TypeMeta{
 				Kind:       "ReplicationController",
 				APIVersion: "v1",
 			},
