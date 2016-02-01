@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/docker/libcompose/project"
 	"k8s.io/kubernetes/pkg/api"
@@ -85,6 +86,11 @@ func main() {
 		// Configure the container ports.
 		var ports []api.ContainerPort
 		for _, port := range service.Ports {
+			// Check if we have to deal with a mapped port
+			if strings.Contains(port, ":") {
+				parts := strings.Split(port, ":")
+				port = parts[1]
+			}
 			portNumber, err := strconv.Atoi(port)
 			if err != nil {
 				log.Fatalf("Invalid container port %s for service %s", port, name)

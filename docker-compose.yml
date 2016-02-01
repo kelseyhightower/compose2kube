@@ -6,7 +6,7 @@ web:
 database:
   image: postgres
   ports:
-    - "5432"
+    - "5432:5432"
 cache:
   image: memcached
   ports:
