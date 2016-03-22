@@ -44,7 +44,7 @@ func main() {
 
 	p := project.NewProject(&project.Context{
 		ProjectName: "kube",
-		ComposeFile: composeFile,
+		ComposeFiles: []string{composeFile},
 	})
 
 	if err := p.Parse(); err != nil {
