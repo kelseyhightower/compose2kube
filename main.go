@@ -41,10 +41,10 @@ func init() {
 
 func main() {
 	flag.Parse()
-
+	
 	p := project.NewProject(&project.Context{
 		ProjectName: "kube",
-		ComposeFile: composeFile,
+		ComposeFiles: []string{composeFile},
 	})
 
 	if err := p.Parse(); err != nil {
@@ -54,7 +54,14 @@ func main() {
 		log.Fatalf("Failed to create the output directory %s: %v", outputDir, err)
 	}
 
-	for name, service := range p.Configs {
+	keys := p.Configs.Keys()
+	
+	for _, name := range keys {
+		service, ok := p.Configs.Get(name)
+		if !ok {
+			log.Fatalf("Failed to get key %s from config", name)
+		}
+		
 		rc := &api.ReplicationController{
 			TypeMeta: unversioned.TypeMeta{
 				Kind:       "ReplicationController",
