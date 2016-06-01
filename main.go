@@ -23,7 +23,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
+	 
 	"github.com/docker/libcompose/project"
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
@@ -42,10 +42,10 @@ func init() {
 func main() {
 	flag.Parse()
 
-	p := project.NewProject(&project.Context{
+	p := project.NewProject(nil, &project.Context{
 		ProjectName: "kube",
-		ComposeFile: composeFile,
-	})
+                ComposeFiles: []string{composeFile},
+	}, nil)
 
 	if err := p.Parse(); err != nil {
 		log.Fatalf("Failed to parse the compose project from %s: %v", composeFile, err)
@@ -53,8 +53,8 @@ func main() {
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		log.Fatalf("Failed to create the output directory %s: %v", outputDir, err)
 	}
-
-	for name, service := range p.Configs {
+	for _, name := range p.ServiceConfigs.Keys() {		
+		service, _ := p.ServiceConfigs.Get(name)
 		rc := &api.ReplicationController{
 			TypeMeta: unversioned.TypeMeta{
 				Kind:       "ReplicationController",
@@ -76,6 +76,7 @@ func main() {
 							{
 								Name:  name,
 								Image: service.Image,
+								Command: service.Command,
 							},
 						},
 					},
@@ -87,6 +88,8 @@ func main() {
 		var ports []api.ContainerPort
 		for _, port := range service.Ports {
 			// Check if we have to deal with a mapped port
+			strings.TrimPrefix(port, "\"")
+			strings.TrimSuffix(port, "\"")
 			if strings.Contains(port, ":") {
 				parts := strings.Split(port, ":")
 				port = parts[1]
@@ -95,10 +98,43 @@ func main() {
 			if err != nil {
 				log.Fatalf("Invalid container port %s for service %s", port, name)
 			}
-			ports = append(ports, api.ContainerPort{ContainerPort: portNumber})
+			ports = append(ports, api.ContainerPort{ContainerPort: int32(portNumber)})
 		}
-
 		rc.Spec.Template.Spec.Containers[0].Ports = ports
+
+		// Configure the container ENV variables 
+		var envs []api.EnvVar
+		for _, env := range service.Environment {
+			if strings.Contains(env, "=") {
+				parts := strings.Split(env, "=")
+				ename := parts[0]
+				evalue := parts[1]
+				envs = append(envs, api.EnvVar{Name: ename, Value: evalue})
+			}
+		}
+		rc.Spec.Template.Spec.Containers[0].Env = envs
+
+		// Configure the volumes 
+		var volumemounts []api.VolumeMount
+		var volumes []api.Volume
+		for _, volumestr := range service.Volumes {
+			parts := strings.Split(volumestr, ":")
+			porig := parts[0]
+			pdest := parts[1]
+			pname := strings.Replace(porig, "/", "", -1)
+			if len(parts) > 2 {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: pname, ReadOnly: true, MountPath: porig })	
+			} else {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: pname, ReadOnly: false, MountPath: porig })	
+			}
+			source := &api.HostPathVolumeSource{
+				Path: pdest,
+			}
+			vsource := api.VolumeSource{HostPath: source}
+			volumes = append(volumes, api.Volume{Name: pname, VolumeSource: vsource})	
+		}
+		rc.Spec.Template.Spec.Containers[0].VolumeMounts = volumemounts
+		rc.Spec.Template.Spec.Volumes = volumes
 
 		// Configure the container restart policy.
 		switch service.Restart {
