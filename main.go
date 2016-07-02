@@ -43,7 +43,7 @@ func main() {
 	flag.Parse()
 
 	p := project.NewProject(&project.Context{
-		ProjectName: "kube",
+		ProjectName:  "kube",
 		ComposeFiles: []string{composeFile},
 	}, nil, nil)
 
@@ -84,8 +84,9 @@ func main() {
 					Spec: api.PodSpec{
 						Containers: []api.Container{
 							{
-								Name:  name,
-								Image: service.Image,
+								Name:    name,
+								Image:   service.Image,
+								Command: service.Command,
 							},
 						},
 					},
@@ -97,6 +98,8 @@ func main() {
 		var ports []api.ContainerPort
 		for _, port := range service.Ports {
 			// Check if we have to deal with a mapped port
+			port = strings.Trim(port, "\"")
+			port = strings.TrimSpace(port)
 			if strings.Contains(port, ":") {
 				parts := strings.Split(port, ":")
 				port = parts[1]
@@ -107,8 +110,54 @@ func main() {
 			}
 			ports = append(ports, api.ContainerPort{ContainerPort: int32(portNumber)})
 		}
-
 		rc.Spec.Template.Spec.Containers[0].Ports = ports
+
+		// Configure the container ENV variables
+		var envs []api.EnvVar
+		for _, env := range service.Environment {
+			if strings.Contains(env, "=") {
+				parts := strings.Split(env, "=")
+				ename := parts[0]
+				evalue := parts[1]
+				envs = append(envs, api.EnvVar{Name: ename, Value: evalue})
+			}
+		}
+		rc.Spec.Template.Spec.Containers[0].Env = envs
+
+		// Configure the volumes
+		var volumemounts []api.VolumeMount
+		var volumes []api.Volume
+		for _, volumestr := range service.Volumes {
+			parts := strings.Split(volumestr, ":")
+			partHostDir := parts[0]
+			partContainerDir := parts[1]
+			partReadOnly := false
+			if len(parts) > 2 {
+				for _, partOpt := range parts[2:] {
+					switch partOpt {
+					case "ro":
+						partReadOnly = true
+						break
+					case "rw":
+						partReadOnly = false
+						break
+					}
+				}
+			}
+			partName := strings.Replace(partHostDir, "/", "", -1)
+			if len(parts) > 2 {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
+			} else {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
+			}
+			source := &api.HostPathVolumeSource{
+				Path: partHostDir,
+			}
+			vsource := api.VolumeSource{HostPath: source}
+			volumes = append(volumes, api.Volume{Name: partName, VolumeSource: vsource})
+		}
+		rc.Spec.Template.Spec.Containers[0].VolumeMounts = volumemounts
+		rc.Spec.Template.Spec.Volumes = volumes
 
 		// Configure the container restart policy.
 		switch service.Restart {
