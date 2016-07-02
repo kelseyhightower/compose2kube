@@ -41,11 +41,11 @@ func init() {
 
 func main() {
 	flag.Parse()
-	
+
 	p := project.NewProject(&project.Context{
 		ProjectName: "kube",
 		ComposeFiles: []string{composeFile},
-	})
+	}, nil, nil)
 
 	if err := p.Parse(); err != nil {
 		log.Fatalf("Failed to parse the compose project from %s: %v", composeFile, err)
@@ -54,14 +54,17 @@ func main() {
 		log.Fatalf("Failed to create the output directory %s: %v", outputDir, err)
 	}
 
-	keys := p.Configs.Keys()
-	
+	if p.ServiceConfigs == nil {
+		log.Fatalf("No service config found, aborting")
+	}
+	keys := p.ServiceConfigs.Keys()
+
 	for _, name := range keys {
-		service, ok := p.Configs.Get(name)
+		service, ok := p.ServiceConfigs.Get(name)
 		if !ok {
 			log.Fatalf("Failed to get key %s from config", name)
 		}
-		
+
 		rc := &api.ReplicationController{
 			TypeMeta: unversioned.TypeMeta{
 				Kind:       "ReplicationController",
@@ -98,11 +101,11 @@ func main() {
 				parts := strings.Split(port, ":")
 				port = parts[1]
 			}
-			portNumber, err := strconv.Atoi(port)
+			portNumber, err := strconv.ParseInt(port, 10, 32)
 			if err != nil {
 				log.Fatalf("Invalid container port %s for service %s", port, name)
 			}
-			ports = append(ports, api.ContainerPort{ContainerPort: portNumber})
+			ports = append(ports, api.ContainerPort{ContainerPort: int32(portNumber)})
 		}
 
 		rc.Spec.Template.Spec.Containers[0].Ports = ports
