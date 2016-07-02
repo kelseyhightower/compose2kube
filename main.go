@@ -23,7 +23,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	 
+
 	"github.com/docker/libcompose/project"
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
@@ -42,10 +42,10 @@ func init() {
 func main() {
 	flag.Parse()
 
-	p := project.NewProject(nil, &project.Context{
-		ProjectName: "kube",
-                ComposeFiles: []string{composeFile},
-	}, nil)
+	p := project.NewProject(&project.Context{
+		ProjectName:  "kube",
+		ComposeFiles: []string{composeFile},
+	}, nil, nil)
 
 	if err := p.Parse(); err != nil {
 		log.Fatalf("Failed to parse the compose project from %s: %v", composeFile, err)
@@ -53,8 +53,18 @@ func main() {
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		log.Fatalf("Failed to create the output directory %s: %v", outputDir, err)
 	}
-	for _, name := range p.ServiceConfigs.Keys() {		
-		service, _ := p.ServiceConfigs.Get(name)
+
+	if p.ServiceConfigs == nil {
+		log.Fatalf("No service config found, aborting")
+	}
+	keys := p.ServiceConfigs.Keys()
+
+	for _, name := range keys {
+		service, ok := p.ServiceConfigs.Get(name)
+		if !ok {
+			log.Fatalf("Failed to get key %s from config", name)
+		}
+
 		rc := &api.ReplicationController{
 			TypeMeta: unversioned.TypeMeta{
 				Kind:       "ReplicationController",
@@ -74,8 +84,8 @@ func main() {
 					Spec: api.PodSpec{
 						Containers: []api.Container{
 							{
-								Name:  name,
-								Image: service.Image,
+								Name:    name,
+								Image:   service.Image,
 								Command: service.Command,
 							},
 						},
@@ -88,13 +98,13 @@ func main() {
 		var ports []api.ContainerPort
 		for _, port := range service.Ports {
 			// Check if we have to deal with a mapped port
-			strings.TrimPrefix(port, "\"")
-			strings.TrimSuffix(port, "\"")
+			port = strings.Trim(port, "\"")
+			port = strings.TrimSpace(port)
 			if strings.Contains(port, ":") {
 				parts := strings.Split(port, ":")
 				port = parts[1]
 			}
-			portNumber, err := strconv.Atoi(port)
+			portNumber, err := strconv.ParseInt(port, 10, 32)
 			if err != nil {
 				log.Fatalf("Invalid container port %s for service %s", port, name)
 			}
@@ -102,7 +112,7 @@ func main() {
 		}
 		rc.Spec.Template.Spec.Containers[0].Ports = ports
 
-		// Configure the container ENV variables 
+		// Configure the container ENV variables
 		var envs []api.EnvVar
 		for _, env := range service.Environment {
 			if strings.Contains(env, "=") {
@@ -114,24 +124,37 @@ func main() {
 		}
 		rc.Spec.Template.Spec.Containers[0].Env = envs
 
-		// Configure the volumes 
+		// Configure the volumes
 		var volumemounts []api.VolumeMount
 		var volumes []api.Volume
 		for _, volumestr := range service.Volumes {
 			parts := strings.Split(volumestr, ":")
-			porig := parts[0]
-			pdest := parts[1]
-			pname := strings.Replace(porig, "/", "", -1)
+			partHostDir := parts[0]
+			partContainerDir := parts[1]
+			partReadOnly := false
 			if len(parts) > 2 {
-				volumemounts = append(volumemounts, api.VolumeMount{Name: pname, ReadOnly: true, MountPath: porig })	
+				for _, partOpt := range parts[2:] {
+					switch partOpt {
+					case "ro":
+						partReadOnly = true
+						break
+					case "rw":
+						partReadOnly = false
+						break
+					}
+				}
+			}
+			partName := strings.Replace(partHostDir, "/", "", -1)
+			if len(parts) > 2 {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
 			} else {
-				volumemounts = append(volumemounts, api.VolumeMount{Name: pname, ReadOnly: false, MountPath: porig })	
+				volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
 			}
 			source := &api.HostPathVolumeSource{
-				Path: pdest,
+				Path: partHostDir,
 			}
 			vsource := api.VolumeSource{HostPath: source}
-			volumes = append(volumes, api.Volume{Name: pname, VolumeSource: vsource})	
+			volumes = append(volumes, api.Volume{Name: partName, VolumeSource: vsource})
 		}
 		rc.Spec.Template.Spec.Containers[0].VolumeMounts = volumemounts
 		rc.Spec.Template.Spec.Volumes = volumes
