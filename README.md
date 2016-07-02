@@ -109,3 +109,51 @@ database-jq2lr                   1/1       Running   0          6h
 kube-controller-172.16.238.141   4/4       Running   0          6h
 web-1vj6h                        1/1       Running   0          6h
 ```
+
+### Advanced Features
+
+#### Environment Variables
+
+Environment variables may be injected into the container.
+
+```yaml
+web:
+  image: nginx
+  ports:
+    - "80"
+    - "443"
+  environment:
+    - NGINX_HOST=example.com
+```
+
+#### Modifying the default command
+
+The default command may be overwritten with the "command" option.
+
+```yaml
+web:
+  image: nginx
+  ports:
+    - "80"
+    - "443"
+  command:
+    - apt update
+```
+
+#### Host Volumes
+
+For volumes, we currently only support mounting a host volume to a container.
+
+The host volume is by default writable. The `:ro` option may be appended to
+bind the volume as read only.
+
+```yaml
+web:
+  image: nginx
+  ports:
+    - "80"
+    - "443"
+  volumes:
+    - /srv/nginx/uploads:/usr/share/nginx/uploads # Writable
+    - /srv/nginx/html:/usr/share/nginx/html:ro    # Read Only
+```
