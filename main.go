@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/docker/libcompose/config"
 	"github.com/docker/libcompose/project"
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
@@ -45,7 +46,7 @@ func main() {
 	p := project.NewProject(&project.Context{
 		ProjectName:  "kube",
 		ComposeFiles: []string{composeFile},
-	}, nil, nil)
+	}, nil, &config.ParseOptions{})
 
 	if err := p.Parse(); err != nil {
 		log.Fatalf("Failed to parse the compose project from %s: %v", composeFile, err)
