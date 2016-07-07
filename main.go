@@ -191,8 +191,9 @@ func main() {
 		} else {
 			// Save the replication controller to Yaml file
 			var exp interface{}
-			// because yaml is not directly usable grom api, we can unmarshal json to interface{}
+			// because yaml is not directly usable from api, we can unmarshal json to interface{}
 			// and then write yaml file
+            // yaml segfaults on serializing rc directly
 			json.Unmarshal(data, &exp)
 			data, err = yaml.Marshal(exp)
 			if err != nil {
