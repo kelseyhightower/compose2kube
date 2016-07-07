@@ -26,6 +26,7 @@ import (
 
 	"github.com/docker/libcompose/config"
 	"github.com/docker/libcompose/project"
+	"gopkg.in/yaml.v2"
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
 )
@@ -33,11 +34,13 @@ import (
 var (
 	composeFile string
 	outputDir   string
+	asYml       bool
 )
 
 func init() {
 	flag.StringVar(&composeFile, "compose-file", "docker-compose.yml", "Specify an alternate compose `file`")
 	flag.StringVar(&outputDir, "output-dir", "output", "Kubernetes configs output `directory`")
+	flag.BoolVar(&asYml, "yaml", false, "output yaml instead of json")
 }
 
 func main() {
@@ -176,14 +179,33 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to marshal the replication controller: %v", err)
 		}
-
-		// Save the replication controller for the Docker compose service to the
-		// configs directory.
-		outputFileName := fmt.Sprintf("%s-rc.json", name)
-		outputFilePath := filepath.Join(outputDir, outputFileName)
-		if err := ioutil.WriteFile(outputFilePath, data, 0644); err != nil {
-			log.Fatalf("Failed to write replication controller %s: %v", outputFileName, err)
+		if !asYml {
+			// Save the replication controller for the Docker compose service to the
+			// configs directory.
+			outputFileName := fmt.Sprintf("%s-rc.json", name)
+			outputFilePath := filepath.Join(outputDir, outputFileName)
+			if err := ioutil.WriteFile(outputFilePath, data, 0644); err != nil {
+				log.Fatalf("Failed to write replication controller %s: %v", outputFileName, err)
+			}
+			fmt.Println(outputFilePath)
+		} else {
+			// Save the replication controller to Yaml file
+			var exp interface{}
+			// because yaml is not directly usable grom api, we can unmarshal json to interface{}
+			// and then write yaml file
+			json.Unmarshal(data, &exp)
+			data, err = yaml.Marshal(exp)
+			if err != nil {
+				log.Fatalf("Failed to marshal the replication controller to yaml: %v", err)
+			}
+			// Save the replication controller for the Docker compose service to the
+			// configs directory.
+			outputFileName := fmt.Sprintf("%s-rc.yml", name)
+			outputFilePath := filepath.Join(outputDir, outputFileName)
+			if err := ioutil.WriteFile(outputFilePath, data, 0644); err != nil {
+				log.Fatalf("Failed to write replication controller %s: %v", outputFileName, err)
+			}
+			fmt.Println(outputFilePath)
 		}
-		fmt.Println(outputFilePath)
 	}
 }
