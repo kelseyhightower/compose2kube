@@ -24,26 +24,28 @@ import (
 	"strconv"
 	"strings"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/docker/libcompose/config"
 	"github.com/docker/libcompose/project"
-	"gopkg.in/yaml.v2"
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
 )
 
 var (
-	composeFile string
-	outputDir   string
-	asYml       bool
+	composeFilePath string
+	outputDir       string
+	asYml           bool
 )
 
 func init() {
-	flag.StringVar(&composeFile, "compose-file", "docker-compose.yml", "Specify an alternate compose `file`")
+	flag.StringVar(&composeFilePath, "compose-file-path", "./", "Specify an alternate path for compose files")
 	flag.StringVar(&outputDir, "output-dir", "output", "Kubernetes configs output `directory`")
 	flag.BoolVar(&asYml, "yaml", false, "output yaml instead of json")
 }
 
 func parseDockerCompose() *project.Project {
+	composeFile := composeFilePath + "docker-compose.yml"
 	p := project.NewProject(&project.Context{
 		ProjectName:  "kube",
 		ComposeFiles: []string{composeFile},
@@ -62,7 +64,7 @@ func parseDockerCompose() *project.Project {
 	return p
 }
 
-func createReplicationController(shortName string, service *config.ServiceConfig) *api.ReplicationController {
+func createReplicationController(shortName string, service *config.ServiceConfig, scale int) *api.ReplicationController {
 	rc := &api.ReplicationController{
 		TypeMeta: unversioned.TypeMeta{
 			Kind:       "ReplicationController",
@@ -73,7 +75,7 @@ func createReplicationController(shortName string, service *config.ServiceConfig
 			Labels: map[string]string{"service": shortName},
 		},
 		Spec: api.ReplicationControllerSpec{
-			Replicas: 1,
+			Replicas: int32(scale),
 			Selector: map[string]string{"service": shortName},
 			Template: &api.PodTemplateSpec{
 				ObjectMeta: api.ObjectMeta{
@@ -213,13 +215,34 @@ func writeOuputFile(shortName string, rc *api.ReplicationController) {
 	}
 }
 
+func parseRancherCompose() map[interface{}]interface{} {
+	composeFile := composeFilePath + "rancher-compose.yml"
+	file, err := ioutil.ReadFile(composeFile)
+	if err != nil {
+		log.Printf("error: %v", err)
+		return nil
+	}
+	var f interface{}
+	err = yaml.Unmarshal(file, &f)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	return f.(map[interface{}]interface{})
+}
+
+func configureScale(name string, rancherCompose map[interface{}]interface{}) int {
+	if rancherCompose[name] != nil && rancherCompose[name].(map[interface{}]interface{})["scale"] != nil {
+		return rancherCompose[name].(map[interface{}]interface{})["scale"].(int)
+	}
+	return 1
+}
+
 func main() {
 	flag.Parse()
-	p := parseDockerCompose()
-	keys := p.ServiceConfigs.Keys()
-
-	for _, name := range keys {
-		service, ok := p.ServiceConfigs.Get(name)
+	rancherCompose := parseRancherCompose()
+	dockerCompose := parseDockerCompose()
+	for _, name := range dockerCompose.ServiceConfigs.Keys() {
+		service, ok := dockerCompose.ServiceConfigs.Get(name)
 		if !ok {
 			log.Fatalf("Failed to get key %s from config", name)
 		}
@@ -228,8 +251,8 @@ func main() {
 		if len(name) > 24 {
 			shortName = name[0:24]
 		}
-
-		rc := createReplicationController(shortName, service)
+		scale := configureScale(name, rancherCompose)
+		rc := createReplicationController(shortName, service, scale)
 		rc.Spec.Template.Spec.Containers[0].Ports = configurePorts(name, service)
 		rc.Spec.Template.Spec.Containers[0].Env = configureVariables(service)
 		// rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
