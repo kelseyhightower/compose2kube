@@ -165,18 +165,39 @@ func configureRestartPolicy(name string, service *config.ServiceConfig) api.Rest
 	return restartPolicy
 }
 
-func writeOuputFile(shortName string, rc *api.ReplicationController) {
-	data, err := json.MarshalIndent(rc, "", "  ")
+func createService(shortName string, service *config.ServiceConfig) *api.Service {
+	ports := make([]api.ServicePort, 1)
+	ports[0].Port = 8080
+
+	srv := &api.Service{
+		TypeMeta: unversioned.TypeMeta{
+			Kind:       "Service",
+			APIVersion: "v1",
+		},
+		ObjectMeta: api.ObjectMeta{
+			Name: shortName,
+		},
+		Spec: api.ServiceSpec{
+			Selector: map[string]string{"service": shortName},
+			Ports:    ports,
+		},
+	}
+
+	return srv
+}
+
+func writeFile(shortName string, sufix string, object interface{}) {
+	data, err := json.MarshalIndent(object, "", "  ")
 	if err != nil {
-		log.Fatalf("Failed to marshal the replication controller: %v", err)
+		log.Fatalf("Failed to marshal file %s-%s: %v", shortName, sufix, err)
 	}
 	if !asYml {
 		// Save the replication controller for the Docker compose service to the
 		// configs directory.
-		outputFileName := fmt.Sprintf("%s-rc.json", shortName)
+		outputFileName := fmt.Sprintf("%s-%s.json", shortName, sufix)
 		outputFilePath := filepath.Join(outputDir, outputFileName)
 		if err := ioutil.WriteFile(outputFilePath, data, 0644); err != nil {
-			log.Fatalf("Failed to write replication controller %s: %v", outputFileName, err)
+			log.Fatalf("Failed to wrtie file %s: %v", outputFileName, err)
 		}
 		fmt.Println(outputFilePath)
 	} else {
@@ -184,18 +205,18 @@ func writeOuputFile(shortName string, rc *api.ReplicationController) {
 		var exp interface{}
 		// because yaml is not directly usable from api, we can unmarshal json to interface{}
 		// and then write yaml file
-		// yaml segfaults on serializing rc directly
+		// yaml segfaults on serializing srv directly
 		json.Unmarshal(data, &exp)
 		data, err = yaml.Marshal(exp)
 		if err != nil {
-			log.Fatalf("Failed to marshal the replication controller to yaml: %v", err)
+			log.Fatalf("Failed to marshal file %s-%s: %v", shortName, sufix, err)
 		}
 		// Save the replication controller for the Docker compose service to the
 		// configs directory.
-		outputFileName := fmt.Sprintf("%s-rc.yml", shortName)
+		outputFileName := fmt.Sprintf("%s-%s.yml", shortName, sufix)
 		outputFilePath := filepath.Join(outputDir, outputFileName)
 		if err := ioutil.WriteFile(outputFilePath, data, 0644); err != nil {
-			log.Fatalf("Failed to write replication controller %s: %v", outputFileName, err)
+			log.Fatalf("Failed to write service %s: %v", outputFileName, err)
 		}
 		fmt.Println(outputFilePath)
 	}
@@ -218,6 +239,10 @@ func processDockerCompose(dockerCompose *project.Project, rancherCompose map[int
 		rc.Spec.Template.Spec.Containers[0].Env = configureVariables(service)
 		// rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
 		rc.Spec.Template.Spec.RestartPolicy = configureRestartPolicy(name, service)
-		writeOuputFile(shortName, rc)
+		writeFile(shortName, "rc", rc)
+
+		srv := createService(shortName, service)
+		writeFile(shortName, "srv", srv)
+
 	}
 }
