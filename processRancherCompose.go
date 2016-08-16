@@ -45,26 +45,30 @@ func configureScale(name string, rancherCompose map[interface{}]interface{}) int
 }
 
 func processRancherCompose(rancherCompose map[interface{}]interface{}) {
+	if len(rancherCompose) == 0 {
+		return
+	}
+
 	catalog := rancherCompose[".catalog"].(map[interface{}]interface{})
 	var questions []interface{}
 	if catalog["questions"] != nil {
 		questions = catalog["questions"].([]interface{})
 	}
 
-	firstQuestion := make(map[string]string)
+	firstQuestion := make(map[string]interface{})
 	firstQuestion["variable"] = "NAME"
 	firstQuestion["default"] = catalog["name"].(string)
 	firstQuestion["label"] = "Kubernetes Name (Max 24 characters)"
 	firstQuestion["description"] = "at most 24 characters] = matching regex [a-z]([-a-z0-9]*[a-z0-9])?)"
-	firstQuestion["required"] = "true"
+	firstQuestion["required"] = true
 	firstQuestion["type"] = "string"
 
-	secondQuestion := make(map[string]string)
+	secondQuestion := make(map[string]interface{})
 	secondQuestion["variable"] = "NAMESPACE"
 	secondQuestion["default"] = "default"
 	secondQuestion["label"] = "Kubernetes Namespace"
 	secondQuestion["description"] = "Make sure the Namespace exists or you will not be able to see the service"
-	secondQuestion["required"] = "true"
+	secondQuestion["required"] = true
 	secondQuestion["type"] = "string"
 
 	newQuestionsArray := make([]interface{}, 2)
