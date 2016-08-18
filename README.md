@@ -83,6 +83,7 @@ output/database-rc.yaml
 output/database-srv.yaml
 output/web-rc.yaml
 output/web-srv.yaml
+output/rancher-compose.yml
 ```
 
 ### Launch the Kubernetes replication controllers

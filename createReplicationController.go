@@ -101,37 +101,39 @@ func configureLabels(shortName string, service *config.ServiceConfig) map[string
 func configureVolumes(service *config.ServiceConfig) ([]api.VolumeMount, []api.Volume) {
 	var volumemounts []api.VolumeMount
 	var volumes []api.Volume
-	for _, volumestr := range service.Volumes.Volumes {
-		parts := strings.Split(volumestr.String(), ":")
-		if len(parts) < 2 {
-			log.Fatalf("Volumes without host path are not supported: %s", parts)
-		}
-		partHostDir := parts[0]
-		partContainerDir := parts[1]
-		partReadOnly := false
-		if len(parts) > 2 {
-			for _, partOpt := range parts[2:] {
-				switch partOpt {
-				case "ro":
-					partReadOnly = true
-					break
-				case "rw":
-					partReadOnly = false
-					break
+	if service.Volumes != nil {
+		for _, volumestr := range service.Volumes.Volumes {
+			parts := strings.Split(volumestr.String(), ":")
+			if len(parts) < 2 {
+				log.Fatalf("Volumes without host path are not supported: %s", parts)
+			}
+			partHostDir := parts[0]
+			partContainerDir := parts[1]
+			partReadOnly := false
+			if len(parts) > 2 {
+				for _, partOpt := range parts[2:] {
+					switch partOpt {
+					case "ro":
+						partReadOnly = true
+						break
+					case "rw":
+						partReadOnly = false
+						break
+					}
 				}
 			}
+			partName := strings.Replace(partHostDir, "/", "", -1)
+			if len(parts) > 2 {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
+			} else {
+				volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
+			}
+			source := &api.HostPathVolumeSource{
+				Path: partHostDir,
+			}
+			vsource := api.VolumeSource{HostPath: source}
+			volumes = append(volumes, api.Volume{Name: partName, VolumeSource: vsource})
 		}
-		partName := strings.Replace(partHostDir, "/", "", -1)
-		if len(parts) > 2 {
-			volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
-		} else {
-			volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
-		}
-		source := &api.HostPathVolumeSource{
-			Path: partHostDir,
-		}
-		vsource := api.VolumeSource{HostPath: source}
-		volumes = append(volumes, api.Volume{Name: partName, VolumeSource: vsource})
 	}
 	return volumemounts, volumes
 }
