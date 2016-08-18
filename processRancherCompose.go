@@ -87,6 +87,12 @@ func configureHealthCheck(name string, rancherCompose map[interface{}]interface{
 	return nil
 }
 
+func cleanServices(name string, rancherCompose map[interface{}]interface{}) {
+	if rancherCompose[name] != nil {
+		delete(rancherCompose, name)
+	}
+}
+
 func processRancherCompose(rancherCompose map[interface{}]interface{}) {
 	if len(rancherCompose) == 0 {
 		return
