@@ -51,7 +51,7 @@ func writeFile(shortName string, sufix string, object interface{}) {
 	if err != nil {
 		log.Fatalf("Failed to marshal file %s-%s: %v", shortName, sufix, err)
 	}
-	if !asYml {
+	if asJSON {
 		// Save the replication controller for the Docker compose service to the
 		// configs directory.
 		outputFileName := fmt.Sprintf("%s-%s.json", shortName, sufix)
@@ -93,14 +93,8 @@ func processDockerCompose(dockerCompose *project.Project, rancherCompose map[int
 		if len(name) > 24 {
 			shortName = name[0:24]
 		}
-		scale := configureScale(name, rancherCompose)
-		rc := createReplicationController(shortName, service, scale)
-		rc.Spec.Template.Spec.Containers[0].Ports = configurePorts(name, service)
-		rc.Spec.Template.Spec.Containers[0].Env = configureVariables(service)
-		rc.ObjectMeta.Labels = configureLabels(shortName, service)
-		rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
-		rc.Spec.Template.Spec.RestartPolicy = configureRestartPolicy(name, service)
-		rc.Spec.Template.Spec.Containers[0].ReadinessProbe = configureHealthCheck(name, rancherCompose)
+
+		rc := createReplicationController(name, shortName, service, rancherCompose)
 		cleanServices(name, rancherCompose)
 		writeFile(shortName, "rc", rc)
 

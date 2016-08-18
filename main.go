@@ -18,13 +18,13 @@ import "flag"
 var (
 	composeFilePath string
 	outputDir       string
-	asYml           bool
+	asJSON          bool
 )
 
 func init() {
 	flag.StringVar(&composeFilePath, "compose-file-path", "./", "Specify an alternate path for compose files")
 	flag.StringVar(&outputDir, "output-dir", "output", "Kubernetes configs output `directory`")
-	flag.BoolVar(&asYml, "yaml", false, "output yaml instead of json")
+	flag.BoolVar(&asJSON, "json", false, "output json instead of yaml")
 }
 
 func main() {

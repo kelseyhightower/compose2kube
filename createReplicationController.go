@@ -24,7 +24,7 @@ import (
 	"k8s.io/kubernetes/pkg/api/unversioned"
 )
 
-func createReplicationController(shortName string, service *config.ServiceConfig, scale int) *api.ReplicationController {
+func createReplicationController(name string, shortName string, service *config.ServiceConfig, rancherCompose map[interface{}]interface{}) *api.ReplicationController {
 	rc := &api.ReplicationController{
 		TypeMeta: unversioned.TypeMeta{
 			Kind:       "ReplicationController",
@@ -33,9 +33,10 @@ func createReplicationController(shortName string, service *config.ServiceConfig
 		ObjectMeta: api.ObjectMeta{
 			Name:      shortName,
 			Namespace: "${NAMESPACE}",
+			Labels:    configureLabels(shortName, service),
 		},
 		Spec: api.ReplicationControllerSpec{
-			Replicas: int32(scale),
+			Replicas: configureScale(name, rancherCompose),
 			Selector: map[string]string{"service": shortName},
 			Template: &api.PodTemplateSpec{
 				ObjectMeta: api.ObjectMeta{
@@ -44,15 +45,20 @@ func createReplicationController(shortName string, service *config.ServiceConfig
 				Spec: api.PodSpec{
 					Containers: []api.Container{
 						{
-							Name:    shortName,
-							Image:   service.Image,
-							Command: service.Command,
+							Name:           shortName,
+							Image:          service.Image,
+							Command:        service.Command,
+							Ports:          configurePorts(name, service),
+							Env:            configureVariables(service),
+							ReadinessProbe: configureHealthCheck(name, rancherCompose),
 						},
 					},
+					RestartPolicy: configureRestartPolicy(name, service),
 				},
 			},
 		},
 	}
+	rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
 	return rc
 }
 

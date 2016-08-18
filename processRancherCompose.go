@@ -41,9 +41,9 @@ func parseRancherCompose() map[interface{}]interface{} {
 	return f.(map[interface{}]interface{})
 }
 
-func configureScale(name string, rancherCompose map[interface{}]interface{}) int {
+func configureScale(name string, rancherCompose map[interface{}]interface{}) int32 {
 	if rancherCompose[name] != nil && rancherCompose[name].(map[interface{}]interface{})["scale"] != nil {
-		return rancherCompose[name].(map[interface{}]interface{})["scale"].(int)
+		return int32(rancherCompose[name].(map[interface{}]interface{})["scale"].(int))
 	}
 	return 1
 }
