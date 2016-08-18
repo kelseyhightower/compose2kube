@@ -20,14 +20,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
-	"strings"
 
 	"github.com/docker/libcompose/config"
 	"github.com/docker/libcompose/project"
 	"gopkg.in/yaml.v2"
-	"k8s.io/kubernetes/pkg/api"
-	"k8s.io/kubernetes/pkg/api/unversioned"
 )
 
 func parseDockerCompose() *project.Project {
@@ -48,142 +44,6 @@ func parseDockerCompose() *project.Project {
 		log.Fatalf("No service config found, aborting")
 	}
 	return p
-}
-
-func createReplicationController(shortName string, service *config.ServiceConfig, scale int) *api.ReplicationController {
-	rc := &api.ReplicationController{
-		TypeMeta: unversioned.TypeMeta{
-			Kind:       "ReplicationController",
-			APIVersion: "v1",
-		},
-		ObjectMeta: api.ObjectMeta{
-			Name:   shortName,
-			Labels: map[string]string{"service": shortName},
-		},
-		Spec: api.ReplicationControllerSpec{
-			Replicas: int32(scale),
-			Selector: map[string]string{"service": shortName},
-			Template: &api.PodTemplateSpec{
-				ObjectMeta: api.ObjectMeta{
-					Labels: map[string]string{"service": shortName},
-				},
-				Spec: api.PodSpec{
-					Containers: []api.Container{
-						{
-							Name:    shortName,
-							Image:   service.Image,
-							Command: service.Command,
-						},
-					},
-				},
-			},
-		},
-	}
-	return rc
-}
-
-func configureVariables(service *config.ServiceConfig) []api.EnvVar {
-	// Configure the container ENV variables
-	var envs []api.EnvVar
-	for _, env := range service.Environment {
-		if strings.Contains(env, "=") {
-			parts := strings.Split(env, "=")
-			ename := parts[0]
-			evalue := parts[1]
-			envs = append(envs, api.EnvVar{Name: ename, Value: evalue})
-		}
-	}
-	return envs
-}
-
-func configurePorts(name string, service *config.ServiceConfig) []api.ContainerPort {
-	var ports []api.ContainerPort
-	for _, port := range service.Ports {
-		// Check if we have to deal with a mapped port
-		port = strings.Trim(port, "\"")
-		port = strings.TrimSpace(port)
-		if strings.Contains(port, ":") {
-			parts := strings.Split(port, ":")
-			port = parts[1]
-		}
-		portNumber, err := strconv.ParseInt(port, 10, 32)
-		if err != nil {
-			log.Fatalf("Invalid container port %s for service %s", port, name)
-		}
-		ports = append(ports, api.ContainerPort{ContainerPort: int32(portNumber)})
-	}
-	return ports
-}
-
-// func configureVolumes(service *config.ServiceConfig) ([]api.VolumeMount, []api.Volume) {
-// 	var volumemounts []api.VolumeMount
-// 	var volumes []api.Volume
-// 	for _, volumestr := range service.Volumes {
-// 		parts := strings.Split(volumestr, ":")
-// 		partHostDir := parts[0]
-// 		partContainerDir := parts[1]
-// 		partReadOnly := false
-// 		if len(parts) > 2 {
-// 			for _, partOpt := range parts[2:] {
-// 				switch partOpt {
-// 				case "ro":
-// 					partReadOnly = true
-// 					break
-// 				case "rw":
-// 					partReadOnly = false
-// 					break
-// 				}
-// 			}
-// 		}
-// 		partName := strings.Replace(partHostDir, "/", "", -1)
-// 		if len(parts) > 2 {
-// 			volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
-// 		} else {
-// 			volumemounts = append(volumemounts, api.VolumeMount{Name: partName, ReadOnly: partReadOnly, MountPath: partContainerDir})
-// 		}
-// 		source := &api.HostPathVolumeSource{
-// 			Path: partHostDir,
-// 		}
-// 		vsource := api.VolumeSource{HostPath: source}
-// 		volumes = append(volumes, api.Volume{Name: partName, VolumeSource: vsource})
-// 	}
-// 	return volumemounts, volumes
-// }
-
-func configureRestartPolicy(name string, service *config.ServiceConfig) api.RestartPolicy {
-	restartPolicy := api.RestartPolicyAlways
-	switch service.Restart {
-	case "", "always":
-		restartPolicy = api.RestartPolicyAlways
-	case "no":
-		restartPolicy = api.RestartPolicyNever
-	case "on-failure":
-		restartPolicy = api.RestartPolicyOnFailure
-	default:
-		log.Fatalf("Unknown restart policy %s for service %s", service.Restart, name)
-	}
-	return restartPolicy
-}
-
-func createService(shortName string, service *config.ServiceConfig) *api.Service {
-	ports := make([]api.ServicePort, 1)
-	ports[0].Port = 8080
-
-	srv := &api.Service{
-		TypeMeta: unversioned.TypeMeta{
-			Kind:       "Service",
-			APIVersion: "v1",
-		},
-		ObjectMeta: api.ObjectMeta{
-			Name: shortName,
-		},
-		Spec: api.ServiceSpec{
-			Selector: map[string]string{"service": shortName},
-			Ports:    ports,
-		},
-	}
-
-	return srv
 }
 
 func writeFile(shortName string, sufix string, object interface{}) {
@@ -241,7 +101,7 @@ func processDockerCompose(dockerCompose *project.Project, rancherCompose map[int
 		rc.Spec.Template.Spec.RestartPolicy = configureRestartPolicy(name, service)
 		writeFile(shortName, "rc", rc)
 
-		srv := createService(shortName, service)
+		srv := createService(shortName, service, rc)
 		writeFile(shortName, "srv", srv)
 
 	}
