@@ -97,7 +97,8 @@ func processDockerCompose(dockerCompose *project.Project, rancherCompose map[int
 		rc := createReplicationController(shortName, service, scale)
 		rc.Spec.Template.Spec.Containers[0].Ports = configurePorts(name, service)
 		rc.Spec.Template.Spec.Containers[0].Env = configureVariables(service)
-		// rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
+		rc.ObjectMeta.Labels = configureLabels(shortName, service)
+		rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
 		rc.Spec.Template.Spec.RestartPolicy = configureRestartPolicy(name, service)
 		writeFile(shortName, "rc", rc)
 
