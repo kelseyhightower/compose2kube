@@ -18,6 +18,10 @@ import (
 	"io/ioutil"
 	"log"
 	"path/filepath"
+	"strings"
+
+	"k8s.io/kubernetes/pkg/api"
+	"k8s.io/kubernetes/pkg/util/intstr"
 
 	"gopkg.in/yaml.v2"
 )
@@ -42,6 +46,45 @@ func configureScale(name string, rancherCompose map[interface{}]interface{}) int
 		return rancherCompose[name].(map[interface{}]interface{})["scale"].(int)
 	}
 	return 1
+}
+
+func getHealthCheckValue(values map[interface{}]interface{}, key string) interface{} {
+	if values[key] != nil {
+		return values[key]
+	}
+	return 0
+}
+
+func getInt32HealthCheckValue(values map[interface{}]interface{}, key string) int32 {
+	return int32(getHealthCheckValue(values, key).(int))
+}
+
+func configureHealthCheck(name string, rancherCompose map[interface{}]interface{}) *api.Probe {
+	if rancherCompose[name] != nil && rancherCompose[name].(map[interface{}]interface{})["health_check"] != nil {
+		rancherHealhCheck := rancherCompose[name].(map[interface{}]interface{})["health_check"].(map[interface{}]interface{})
+		check := &api.Probe{
+			// TCPSocket: 4,
+			InitialDelaySeconds: getInt32HealthCheckValue(rancherHealhCheck, "initializing_timeout") / 1000,
+			TimeoutSeconds:      getInt32HealthCheckValue(rancherHealhCheck, "response_timeout") / 1000,
+			PeriodSeconds:       getInt32HealthCheckValue(rancherHealhCheck, "interval") / 1000,
+			SuccessThreshold:    getInt32HealthCheckValue(rancherHealhCheck, "healthy_threshold"),
+			FailureThreshold:    getInt32HealthCheckValue(rancherHealhCheck, "unhealthy_threshold"),
+		}
+		port := intstr.IntOrString{IntVal: getInt32HealthCheckValue(rancherHealhCheck, "port")}
+		rancherCheckLine := getHealthCheckValue(rancherHealhCheck, "request_line")
+		if rancherCheckLine == 0 || rancherCheckLine == "" {
+			check.TCPSocket = &api.TCPSocketAction{
+				Port: port,
+			}
+		} else {
+			check.HTTPGet = &api.HTTPGetAction{
+				Path: strings.Split(rancherCheckLine.(string), " ")[1],
+				Port: port,
+			}
+		}
+		return check
+	}
+	return nil
 }
 
 func processRancherCompose(rancherCompose map[interface{}]interface{}) {

@@ -100,6 +100,7 @@ func processDockerCompose(dockerCompose *project.Project, rancherCompose map[int
 		rc.ObjectMeta.Labels = configureLabels(shortName, service)
 		rc.Spec.Template.Spec.Containers[0].VolumeMounts, rc.Spec.Template.Spec.Volumes = configureVolumes(service)
 		rc.Spec.Template.Spec.RestartPolicy = configureRestartPolicy(name, service)
+		rc.Spec.Template.Spec.Containers[0].ReadinessProbe = configureHealthCheck(name, rancherCompose)
 		writeFile(shortName, "rc", rc)
 
 		srv := createService(shortName, service, rc)
