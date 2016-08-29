@@ -1,0 +1,397 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "DWPL08pD/SQ2GzLfoR7ZXnjj7Sw=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/Sirupsen/logrus",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "5rPfda8jFccr3A6heL+JAmi9K9g=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "gIka/369kBaeQ7HShSrP/Xkpd8g=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/docker/docker/pkg/mount",
+			"path": "github.com/docker/docker/pkg/mount",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "28zvWJsE4skyLANiN3Png632NLM=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/docker/docker/pkg/urlutil",
+			"path": "github.com/docker/docker/pkg/urlutil",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "Mgvb6aJiQKpzcOQy5LpfpWrM5L0=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/docker/engine-api/types/strslice",
+			"path": "github.com/docker/engine-api/types/strslice",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "lEqVJt7+iIa0nMKYWIUoQhh9VTM=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/docker/go-connections/nat",
+			"path": "github.com/docker/go-connections/nat",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "qGXit74pcrjdCsusaYiwRsC4rnQ=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/docker/go-units",
+			"path": "github.com/docker/go-units",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "lMDo3dd8xX5areBOFsh+G5llF4c=",
+			"path": "github.com/docker/libcompose/config",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "635R+wC6jYGKTjArxcWQgl8EX+k=",
+			"path": "github.com/docker/libcompose/logger",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "wCO1dkKFIw5ICpk8kOQKByZW4VU=",
+			"path": "github.com/docker/libcompose/project",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "3LdK/2uX/CPy6LbS+L5br01OLUE=",
+			"path": "github.com/docker/libcompose/project/events",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "tsu/Oc8QrvttXQ9EvQKttO2M6Yg=",
+			"path": "github.com/docker/libcompose/project/options",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "7KzVYDWwUfh1LcHudgQir78Msbo=",
+			"path": "github.com/docker/libcompose/utils",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "jvgT/UBqpjaOQt52Yte5LD8eFa0=",
+			"path": "github.com/docker/libcompose/yaml",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "VdXZPcDRHK1T7XjBu2KW8Mb8S6w=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/flynn/go-shlex",
+			"path": "github.com/flynn/go-shlex",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "17vYJDDMJO63/G/tRFIUuSlMCbE=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/ghodss/yaml",
+			"path": "github.com/ghodss/yaml",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "gcbkO3393bmFUCHR2jyGLVWInw8=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/gogo/protobuf/proto",
+			"path": "github.com/gogo/protobuf/proto",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "URsJa4y/sUUw/STmbeYx9EKqaYE=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/golang/glog",
+			"path": "github.com/golang/glog",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "MGFnNo7z324UK7kjSC5v+G+CsCI=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/google/gofuzz",
+			"path": "github.com/google/gofuzz",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "VyjS7JHlgGyiC0LSsFvNN7a5yfU=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/opencontainers/runc/libcontainer/cgroups",
+			"path": "github.com/opencontainers/runc/libcontainer/cgroups",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "o/ze3+yCNe/vJIsA/oB29j39aIM=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/opencontainers/runc/libcontainer/cgroups/fs",
+			"path": "github.com/opencontainers/runc/libcontainer/cgroups/fs",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "Xk8C3kxNG2kEJ3T+fKONvUOUMsw=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/opencontainers/runc/libcontainer/configs",
+			"path": "github.com/opencontainers/runc/libcontainer/configs",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "ru0Tv29psy5Hg429o+jD68kUClU=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/opencontainers/runc/libcontainer/system",
+			"path": "github.com/opencontainers/runc/libcontainer/system",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "3YJklSuzSE1Rt8A+2dhiWSmf/fw=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/pborman/uuid",
+			"path": "github.com/pborman/uuid",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "wF4p4RxVdADjhkh7EVDJ9qa+ApA=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/spf13/pflag",
+			"path": "github.com/spf13/pflag",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "MFM0LORAlH5Hxv82QKaEJ3NJ75c=",
+			"origin": "k8s.io/kubernetes/vendor/github.com/ugorji/go/codec",
+			"path": "github.com/ugorji/go/codec",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "drSl/ipSHSsHWWTrp3WZw4LN/No=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/xeipuuv/gojsonpointer",
+			"path": "github.com/xeipuuv/gojsonpointer",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "pSoUW+qY6LwIJ5lFwGohPU5HUpg=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/xeipuuv/gojsonreference",
+			"path": "github.com/xeipuuv/gojsonreference",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "xSnzI/M5wRhoDd/QTueggPhB3LM=",
+			"origin": "github.com/docker/libcompose/vendor/github.com/xeipuuv/gojsonschema",
+			"path": "github.com/xeipuuv/gojsonschema",
+			"revision": "d81a9bdacff00ba9531e84877ac744956fb6e368",
+			"revisionTime": "2016-08-26T15:42:43Z"
+		},
+		{
+			"checksumSHA1": "nJE3D2CS5WnukPIlM9wzErF7tak=",
+			"origin": "k8s.io/kubernetes/vendor/golang.org/x/net/context",
+			"path": "golang.org/x/net/context",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "pfQwQtWlFezJq0Viroa/L+v+yDM=",
+			"origin": "k8s.io/kubernetes/vendor/gopkg.in/inf.v0",
+			"path": "gopkg.in/inf.v0",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "+OgOXBoiQ+X+C2dsAeiOHwBIEH0=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "a83829b6f1293c91addabc89d0571c246397bbf4",
+			"revisionTime": "2016-03-01T20:40:22Z"
+		},
+		{
+			"checksumSHA1": "xF4HU8ADKygTZehPmZ1+rKTAFS4=",
+			"path": "k8s.io/kubernetes/pkg/api",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "6Qmw1l0ZDXN1qyl+l8kTVclV93U=",
+			"path": "k8s.io/kubernetes/pkg/api/meta",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "VLO/2LNtaNT1mN+WO2VKSCNlEB0=",
+			"path": "k8s.io/kubernetes/pkg/api/meta/metatypes",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "pZjjL2g49eC5PMd65enxd9Vh5I0=",
+			"path": "k8s.io/kubernetes/pkg/api/resource",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "onyuJTQKs0S5+KP5rlfu7gYo08Q=",
+			"path": "k8s.io/kubernetes/pkg/api/unversioned",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "kn/R5Sf1/HBJXt7iMaWnAVFQ3AU=",
+			"path": "k8s.io/kubernetes/pkg/auth/user",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "PPLiNb+6zNEO0svwDcoMXxBPNTs=",
+			"path": "k8s.io/kubernetes/pkg/conversion",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "cj9aqD5xBifXiW0YwRFN836Z4Pc=",
+			"path": "k8s.io/kubernetes/pkg/conversion/queryparams",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "ZS2khgfmeJhaNulzR31MJZC0e30=",
+			"path": "k8s.io/kubernetes/pkg/fields",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "b3KCQh7P/I2YPLI1WQGpvBlHvEQ=",
+			"path": "k8s.io/kubernetes/pkg/labels",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "wjKW6vgPYl/Jh9iXM/jwOArCQSc=",
+			"path": "k8s.io/kubernetes/pkg/runtime",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "EGtG9b3Z893/5tY+WCljqXwH1Ic=",
+			"path": "k8s.io/kubernetes/pkg/runtime/serializer",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "WhV3IonE/wtYZw9392W88jdPNtQ=",
+			"path": "k8s.io/kubernetes/pkg/runtime/serializer/json",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "fSAEP399u9p6cyF6agi8nguHrjw=",
+			"path": "k8s.io/kubernetes/pkg/runtime/serializer/protobuf",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "wOe37IxN1Bd1aquUvHt5G9eqa4Y=",
+			"path": "k8s.io/kubernetes/pkg/runtime/serializer/recognizer",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "nxjupr+qSbF5okWfHAioYAYAPuU=",
+			"path": "k8s.io/kubernetes/pkg/runtime/serializer/versioning",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "oC7yBeTQRqF2rsE6Suf5V0DlOSA=",
+			"path": "k8s.io/kubernetes/pkg/types",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "2BL/1peadLblAHJWuyGA3a8Iwx0=",
+			"path": "k8s.io/kubernetes/pkg/util",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "3t4lrWFwarkIFvCbxVOKJNsFFdE=",
+			"path": "k8s.io/kubernetes/pkg/util/errors",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "PT7skPyE5n+at5Q1AxKhxgUBq9I=",
+			"path": "k8s.io/kubernetes/pkg/util/framer",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "1EzfBYMcBRfVdD4w0S47z7pMj8s=",
+			"path": "k8s.io/kubernetes/pkg/util/intstr",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "FutyzoaqdM2/1seR4qU+t1HEAas=",
+			"path": "k8s.io/kubernetes/pkg/util/json",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "vo0ySNBYmJiGu57q/q9OJ5RJyvs=",
+			"path": "k8s.io/kubernetes/pkg/util/rand",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "O8QasKTdkykUf9fe3d2jCSCz/hc=",
+			"path": "k8s.io/kubernetes/pkg/util/runtime",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "13wh+gdHSmmTIDtkdIBTLv7hcHA=",
+			"path": "k8s.io/kubernetes/pkg/util/sets",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "C92saGiB1ColOT2x0fD2p6Hjm08=",
+			"path": "k8s.io/kubernetes/pkg/util/validation",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "lMwC4GsFSekMjRX/7sKoxKE+u4Q=",
+			"path": "k8s.io/kubernetes/pkg/util/wait",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "BuqWyo2erwK1TQ7z0jhwoi9rOIw=",
+			"path": "k8s.io/kubernetes/pkg/util/yaml",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		},
+		{
+			"checksumSHA1": "GS8RhY0+9O9Fb2EMVamcrqpfMgw=",
+			"path": "k8s.io/kubernetes/third_party/forked/reflect",
+			"revision": "6bdb9b0b8d992d01634f7479a02259f146844abf",
+			"revisionTime": "2016-06-19T00:54:57Z"
+		}
+	],
+	"rootPath": "github.com/kelseyhightower/compose2kube"
+}
