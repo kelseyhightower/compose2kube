@@ -33,7 +33,7 @@ func createService(shortName string, service *config.ServiceConfig, rc *api.Repl
 		},
 		ObjectMeta: api.ObjectMeta{
 			Name:      shortName,
-			Namespace: "${NAMESPACE}",
+			Namespace: "default",
 		},
 		Spec: api.ServiceSpec{
 			Selector: map[string]string{"service": shortName},
